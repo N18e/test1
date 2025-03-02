@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>XRen Premium</title>
+</head>
+<body class="bg-black min-h-screen relative">
+<!-- Здесь три слоя -->
+<!-- 1) Чёрный фон уже задан body.bg-black -->
+<!-- 2) Прозрачный серый оверлей -->
+<div class="absolute inset-0 bg-gray-800/50"></div>
+<!-- 3) Контейнер (стеклянные карточки) будет внутри #app (relative z-10) -->
+<div id="app" class="relative z-10"></div>
+<script type="module" src="/src/main.js"></script>
+</body>
 </html>
