@@ -1,22 +1,16 @@
-# Node / build
 node_modules/
 dist/
 .vite/
 
-# Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# IDE / Editor
 .idea/
 .vscode/
-
-# System
 .DS_Store
 Thumbs.db
 
-# Env
 .env
 .env.*.local

@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-900 relative">
-    <!-- Полупрозрачная «стеклянная» карточка -->
+    <!-- Стеклянная карточка -->
     <div class="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl p-8 w-full max-w-3xl mx-4">
 
       <!-- Переключатель языка -->
@@ -10,7 +10,6 @@
           @mouseleave="!pinned && (langMenuOpen = false)"
           @click.stop="togglePin"
       >
-        <!-- Кнопка с текущим языком -->
         <button
             class="px-3 py-1 border border-gray-500 text-gray-300 rounded transition hover:bg-gray-700 hover:text-white hover:border-gray-700"
         >
@@ -19,7 +18,6 @@
           <span v-else>RU</span>
         </button>
 
-        <!-- Дропдаун -->
         <div
             v-if="langMenuOpen"
             class="absolute right-0 mt-1 bg-gray-800 border border-gray-600 rounded shadow-lg w-20"
@@ -42,117 +40,125 @@
         {{ t('welcomeTitle') }}
       </h1>
 
-      <!-- Две колонки -->
-      <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+      <!-- Форма vee-validate -->
+      <Form
+          @submit="onSubmit"
+          :validation-schema="computedLoginSchema"
+          v-slot="{ errors }"
+      >
+        <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
 
-        <!-- Левая колонка: Email, Password, кнопка «Войти», «Забыли пароль?» -->
-        <div class="flex-1">
-          <label class="block text-sm text-gray-300 mb-1" for="email">
-            {{ t('emailLabel') }}
-          </label>
-          <input
-              type="email"
-              id="email"
-              v-model="email"
-              class="w-full mb-4 bg-black/30 text-white rounded border border-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              :placeholder="t('emailPlaceholder')"
-          />
-
-          <label class="block text-sm text-gray-300 mb-1" for="password">
-            {{ t('passwordLabel') }}
-          </label>
-          <input
-              type="password"
-              id="password"
-              v-model="password"
-              class="w-full mb-4 bg-black/30 text-white rounded border border-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              :placeholder="t('passwordPlaceholder')"
-          />
-
-          <!-- Кнопка «Войти» -->
-          <button
-              @click="handleLogin"
-              class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 rounded transition-colors"
-          >
-            {{ t('loginBtn') }}
-          </button>
-
-          <!-- «Забыли пароль?» под «Войти» -->
-          <div class="mt-2 text-sm text-gray-300">
-            <router-link to="/password-reset" class="hover:underline">
-              {{ t('cantLogin') }}
-            </router-link>
-          </div>
-        </div>
-
-        <!-- Разделитель (md+) -->
-        <div class="hidden md:block w-px bg-gray-400/20"></div>
-
-        <!-- Правая колонка: Google, Apple, Гость, + «Регистрация» -->
-        <div class="flex-1 flex flex-col items-center">
-          <div class="text-gray-300 mb-2">
-            {{ t('orContinue') }}
-          </div>
-
-          <!-- Google -->
-          <button
-              @click="oauth('google')"
-              class="group w-full mb-4 border border-gray-600 bg-transparent text-gray-300 py-2 rounded
-                   flex items-center justify-center space-x-2 transition-colors
-                   hover:bg-gray-700 hover:border-gray-700 hover:text-white"
-          >
-            <img
-                src="https://cdn-icons-png.flaticon.com/512/300/300221.png"
-                alt="Google"
-                class="w-5 h-5 group-hover:brightness-110"
+          <!-- Левая колонка -->
+          <div class="flex-1">
+            <!-- Email -->
+            <label class="block text-sm text-gray-300 mb-1" for="email">
+              {{ t('emailLabel') }}
+            </label>
+            <Field
+                name="email"
+                type="email"
+                class="w-full mb-1 bg-black/30 text-white rounded border px-3 py-2 focus:outline-none focus:ring-2"
+                :placeholder="t('emailPlaceholder')"
             />
-            <span>{{ t('continueWith') }} Google</span>
-          </button>
+            <ErrorMessage name="email" v-slot="{ message }">
+              <div class="text-xs text-red-400 mb-2">{{ message }}</div>
+            </ErrorMessage>
 
-          <!-- Apple -->
-          <button
-              @click="oauth('apple')"
-              class="group w-full mb-4 border border-gray-600 bg-transparent text-gray-300 py-2 rounded
-                   flex items-center justify-center space-x-2 transition-colors
-                   hover:bg-gray-700 hover:border-gray-700 hover:text-white"
-          >
-            <img
-                src="https://cdn-icons-png.flaticon.com/512/0/747.png"
-                alt="Apple"
-                class="w-5 h-5 group-hover:brightness-110"
+            <!-- Пароль -->
+            <label class="block text-sm text-gray-300 mb-1" for="password">
+              {{ t('passwordLabel') }}
+            </label>
+            <Field
+                name="password"
+                type="password"
+                class="w-full mb-1 bg-black/30 text-white rounded border px-3 py-2 focus:outline-none focus:ring-2"
+                :placeholder="t('passwordPlaceholder')"
             />
-            <span>{{ t('continueWith') }} Apple</span>
-          </button>
+            <ErrorMessage name="password" v-slot="{ message }">
+              <div class="text-xs text-red-400 mb-4">{{ message }}</div>
+            </ErrorMessage>
 
-          <!-- Гость (в конце) -->
-          <button
-              @click="guestLogin"
-              class="group w-full mb-4 border border-gray-600 bg-transparent text-gray-300 py-2 rounded
-                   flex items-center justify-center space-x-2 transition-colors
-                   hover:bg-gray-700 hover:border-gray-700 hover:text-white"
-          >
-            <svg
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round"
-                class="w-5 h-5 group-hover:brightness-110"
+            <!-- Кнопка "Войти" -->
+            <button
+                type="submit"
+                class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 rounded transition-colors mt-4"
             >
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"></path>
-              <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
-            </svg>
-            <span>{{ t('guestLogin') }}</span>
-          </button>
+              {{ t('loginBtn') }}
+            </button>
 
-          <!-- «Регистрация» под этими кнопками -->
-          <div class="mt-2 text-sm text-gray-300">
-            <router-link to="/register" class="hover:underline">
-              {{ t('registerLink') }}
-            </router-link>
+            <!-- Ссылки: Забыли пароль? (слева) и Регистрация (справа) -->
+            <div class="mt-2 flex items-center justify-between text-sm text-gray-300">
+              <router-link to="/password-reset" class="hover:underline">
+                {{ t('cantLogin') }}
+              </router-link>
+              <router-link to="/register" class="hover:underline">
+                {{ t('registerLink') }}
+              </router-link>
+            </div>
+          </div>
+
+          <!-- Разделитель (md+) -->
+          <div class="hidden md:block w-px bg-gray-400/20"></div>
+
+          <!-- Правая колонка: Google, Apple, Гость -->
+          <div class="flex-1 flex flex-col items-center">
+            <div class="text-gray-300 mb-2">
+              {{ t('orContinue') }}
+            </div>
+
+            <!-- Google -->
+            <button
+                @click.prevent="oauth('google')"
+                class="group w-full mb-4 border border-gray-600 bg-transparent text-gray-300 py-2 rounded
+                     flex items-center justify-center space-x-2 transition-colors
+                     hover:bg-gray-700 hover:border-gray-700 hover:text-white"
+            >
+              <img
+                  src="https://cdn-icons-png.flaticon.com/512/300/300221.png"
+                  alt="Google"
+                  class="w-5 h-5 group-hover:brightness-110"
+              />
+              <span>{{ t('continueWith') }} Google</span>
+            </button>
+
+            <!-- Apple -->
+            <button
+                @click.prevent="oauth('apple')"
+                class="group w-full mb-4 border border-gray-600 bg-transparent text-gray-300 py-2 rounded
+                     flex items-center justify-center space-x-2 transition-colors
+                     hover:bg-gray-700 hover:border-gray-700 hover:text-white"
+            >
+              <img
+                  src="https://cdn-icons-png.flaticon.com/512/0/747.png"
+                  alt="Apple"
+                  class="w-5 h-5 group-hover:brightness-110"
+              />
+              <span>{{ t('continueWith') }} Apple</span>
+            </button>
+
+            <!-- Гость -->
+            <button
+                @click.prevent="guestLogin"
+                class="group w-full mb-4 border border-gray-600 bg-transparent text-gray-300 py-2 rounded
+                     flex items-center justify-center space-x-2 transition-colors
+                     hover:bg-gray-700 hover:border-gray-700 hover:text-white"
+            >
+              <svg
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  class="w-5 h-5 group-hover:brightness-110"
+              >
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"></path>
+                <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
+              </svg>
+              <span>{{ t('guestLogin') }}</span>
+            </button>
           </div>
         </div>
-      </div>
+      </Form>
 
-      <!-- Примечание внизу -->
+      <!-- Примечание -->
       <div class="mt-6 text-center text-xs text-gray-400">
         {{ t('secureNote') }}
       </div>
@@ -161,24 +167,29 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import { getLoginSchema } from '@/utils/validationSchemas'
 import messages from '@/i18n/messages'
 
 export default {
   name: 'AuthView',
+  components: {
+    Form,
+    Field,
+    ErrorMessage
+  },
   setup() {
-    const email = ref('')
-    const password = ref('')
-
-    // Языки: UA, EN, RU
-    const availableLangs = ['ua', 'en', 'ru']
-
-    // Текущий язык
+    // Языки
+    const availableLangs = ['ua','en','ru']
     const currentLang = ref('ua')
-    // Открыто ли меню
     const langMenuOpen = ref(false)
-    // «Прикреплено» ли меню (клик)
     const pinned = ref(false)
+
+    // Динамическая схема
+    const computedLoginSchema = computed(() => {
+      return getLoginSchema(currentLang.value)
+    })
 
     onMounted(() => {
       const savedLang = localStorage.getItem('lang')
@@ -187,15 +198,12 @@ export default {
       }
     })
 
-    // При выборе языка
     function chooseLang(lang) {
       currentLang.value = lang
       localStorage.setItem('lang', lang)
       langMenuOpen.value = false
       pinned.value = false
     }
-
-    // При клике на переключатель – фиксируем/снимаем фиксацию
     function togglePin() {
       pinned.value = !pinned.value
       if (pinned.value) {
@@ -205,19 +213,17 @@ export default {
 
     const t = (key) => messages[currentLang.value][key] || key
 
-    function handleLogin() {
-      console.log('Login with:', email.value, password.value)
+    function onSubmit(values) {
+      console.log('Auth form submit:', values)
     }
     function guestLogin() {
-      console.log('Login as guest')
+      console.log('Guest login')
     }
     function oauth(provider) {
       console.log('OAuth:', provider)
     }
 
     return {
-      email,
-      password,
       availableLangs,
       currentLang,
       langMenuOpen,
@@ -225,7 +231,8 @@ export default {
       chooseLang,
       togglePin,
       t,
-      handleLogin,
+      computedLoginSchema,
+      onSubmit,
       guestLogin,
       oauth
     }
