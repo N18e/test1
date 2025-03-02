@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ua">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>XRen Premium</title>
+    <title>Ласкаво просимо</title>
 </head>
 <body class="bg-black min-h-screen relative">
-<!-- Здесь три слоя -->
-<!-- 1) Чёрный фон уже задан body.bg-black -->
-<!-- 2) Прозрачный серый оверлей -->
+<!-- Слой 1: Чёрный фон -->
 <div class="absolute inset-0 bg-gray-800/50"></div>
-<!-- 3) Контейнер (стеклянные карточки) будет внутри #app (relative z-10) -->
+<!-- Слой 2: Приложение -->
 <div id="app" class="relative z-10"></div>
 <script type="module" src="/src/main.js"></script>
 </body>

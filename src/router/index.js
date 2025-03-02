@@ -4,9 +4,21 @@ import RegisterView from '@/views/RegisterView.vue'
 import PasswordResetView from '@/views/PasswordResetView.vue'
 
 const routes = [
-    { path: '/', name: 'Auth', component: AuthView },
-    { path: '/register', name: 'Register', component: RegisterView },
-    { path: '/password-reset', name: 'PasswordReset', component: PasswordResetView }
+    {
+        path: '/',
+        name: 'Auth',
+        component: AuthView
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: RegisterView
+    },
+    {
+        path: '/password-reset',
+        name: 'PasswordReset',
+        component: PasswordResetView
+    }
 ]
 
 const router = createRouter({
