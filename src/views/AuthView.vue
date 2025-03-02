@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-900 relative">
-    <!-- «Стеклянная» карточка -->
+    <!-- Стеклянная карточка -->
     <div class="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl p-8 w-full max-w-3xl mx-4">
 
       <!-- Переключатель языка (RU/EN) -->
@@ -16,17 +16,19 @@
         </button>
       </div>
 
-      <!-- Заголовок: «Добро пожаловать» -->
+      <!-- Заголовок: «Добро пожаловать» / «Welcome» -->
       <h1 class="text-2xl font-bold text-white mb-6">
         {{ t('welcomeTitle') }}
       </h1>
 
-      <!-- Контейнер с двумя колонками (на мобильных сложатся в одну) -->
+      <!-- Две колонки: поля слева, соцсети справа -->
       <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
 
-        <!-- Левая часть (Email/Password) -->
+        <!-- Левая часть: Email/Password -->
         <div class="flex-1">
-          <label class="block text-sm text-gray-300 mb-1" for="email">{{ t('emailLabel') }}</label>
+          <label class="block text-sm text-gray-300 mb-1" for="email">
+            {{ t('emailLabel') }}
+          </label>
           <input
               type="email"
               id="email"
@@ -36,7 +38,9 @@
               :placeholder="t('emailPlaceholder')"
           />
 
-          <label class="block text-sm text-gray-300 mb-1" for="password">{{ t('passwordLabel') }}</label>
+          <label class="block text-sm text-gray-300 mb-1" for="password">
+            {{ t('passwordLabel') }}
+          </label>
           <input
               type="password"
               id="password"
@@ -53,7 +57,7 @@
             {{ t('loginBtn') }}
           </button>
 
-          <!-- Ссылки: восстановление пароля и регистрация -->
+          <!-- Ссылки: "Can't log in?" и "Register" -->
           <div class="mt-4 flex items-center justify-between text-sm text-gray-300">
             <router-link to="/password-reset" class="hover:underline">
               {{ t('cantLogin') }}
@@ -69,12 +73,14 @@
           </div>
         </div>
 
-        <!-- Разделитель (только на md+) -->
+        <!-- Разделитель (md+) -->
         <div class="hidden md:block w-px bg-gray-400/20"></div>
 
         <!-- Правая часть: кнопки соцсетей -->
         <div class="flex-1">
-          <div class="text-gray-300 mb-2">{{ t('orContinue') }}</div>
+          <div class="text-gray-300 mb-2">
+            {{ t('orContinue') }}
+          </div>
 
           <!-- Google -->
           <button
@@ -173,8 +179,9 @@ export default {
 
     function handleLogin() {
       console.log('Login with:', email.value, password.value)
-      // TODO: Логика запроса к бэкенду
+      // TODO: Логика отправки на бэкенд
     }
+
     function oauth(provider) {
       console.log('OAuth:', provider)
       // TODO: OAuth редирект
@@ -195,5 +202,4 @@ export default {
 </script>
 
 <style scoped>
-/* При желании можно добавить дополнительные стили */
 </style>
